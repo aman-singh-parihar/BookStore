@@ -26,9 +26,18 @@ namespace BookStore.Controllers
         [HttpPost]
         public IActionResult Create(Category category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
-            return RedirectToAction("Index", "Category");
+            if (category.Name == category.DisplayOrder.ToString()) 
+            {
+                ModelState.AddModelError("name", "Category Name and Display Order should not be same");
+            }
+            if (ModelState.IsValid) 
+            {
+                _context.Categories.Add(category);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Category");
+            }
+            return View(category);
+            
         }
 
         [HttpGet]
@@ -45,9 +54,24 @@ namespace BookStore.Controllers
             categoryToBeUpdated.Name = category.Name;
             categoryToBeUpdated.DisplayOrder = category.DisplayOrder;
 
-            _context.Entry<Category>(category).State = EntityState.Modified;
+            //_context.Entry<Category>(category).State = EntityState.Modified;
             _context.SaveChanges();
             return RedirectToAction("Index", "Category");
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Category category)
+        {
+            _context.Remove(category);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Category");
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            var category = _context.Categories.Find(id);
+            return View(category);
         }
     }
 }
