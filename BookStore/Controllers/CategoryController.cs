@@ -1,5 +1,6 @@
 ﻿using BookStore.Data;
 using BookStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ namespace BookStore.Controllers
         {
             _context = context;
         }
+        [Authorize]
         public IActionResult Index()
         {
             var categories = _context.Categories.ToList();

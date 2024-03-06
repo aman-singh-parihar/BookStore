@@ -1,4 +1,5 @@
 using BookStore.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore
@@ -15,6 +16,13 @@ namespace BookStore
             services.AddControllersWithViews();
 
             services.AddDbContext<BookStoreDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => 
+            {
+                options.LoginPath = "/Login/Index";
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(20);
+                options.AccessDeniedPath = "/forbidden/";
+            }) ;
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -24,6 +32,8 @@ namespace BookStore
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
