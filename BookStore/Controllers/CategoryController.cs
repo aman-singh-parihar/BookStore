@@ -1,4 +1,6 @@
-﻿using BookStore.Data;
+﻿using BookStore.DataAccess.Data;
+using BookStore.DataAccess.Repository;
+using BookStore.DataAccess.Repository.IRepository;
 using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,16 +10,16 @@ namespace BookStore.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly BookStoreDbContext _context;
+        private readonly ICategoryRepository _repository;
 
-        public CategoryController(BookStoreDbContext context)
+        public CategoryController(ICategoryRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         [Authorize]
         public IActionResult Index()
         {
-            var categories = _context.Categories.ToList();
+            var categories = _repository.GetAll().ToList();
             return View(categories);
         }
         public IActionResult Create() 
@@ -34,8 +36,9 @@ namespace BookStore.Controllers
             }
             if (ModelState.IsValid) 
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                _repository.Add(category);
+                _repository.Save();
+                TempData["status"] = "Category created successfully.";
                 return RedirectToAction("Index", "Category");
             }
             return View(category);
@@ -45,34 +48,36 @@ namespace BookStore.Controllers
         [HttpGet]
         public IActionResult Edit(int? id) 
         { 
-            var category = _context.Categories.Find(id);
+            var category = _repository.Get(item => item.Id == id);
             return View(category);
         }
 
-        [HttpPost]
-        public IActionResult Edit(Category category)
+        [HttpPost, ActionName("Edit")]
+        public IActionResult Update(Category category)
         {
-            var categoryToBeUpdated = _context.Categories.Where(x => x.Id == category.Id).FirstOrDefault();
+            var categoryToBeUpdated = _repository.Get(item => item.Id == category.Id);
             categoryToBeUpdated.Name = category.Name;
             categoryToBeUpdated.DisplayOrder = category.DisplayOrder;
 
             //_context.Entry<Category>(category).State = EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Save();
+            TempData["status"] = "Category updated successfully.";
             return RedirectToAction("Index", "Category");
         }
 
         [HttpPost]
         public IActionResult Delete(Category category)
         {
-            _context.Remove(category);
-            _context.SaveChanges();
+            _repository.Delete(category);
+            _repository.Save();
+            TempData["status"] = "Category deleted successfully.";
             return RedirectToAction("Index", "Category");
         }
 
         [HttpGet]
         public IActionResult Delete(int? id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _repository.Get(item => item.Id == id);
             return View(category);
         }
     }

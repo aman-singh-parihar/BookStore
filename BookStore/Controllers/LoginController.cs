@@ -16,8 +16,12 @@ namespace BookStore.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(Login login)
         {
+            if (!ModelState.IsValid) 
+            {
+                return View(login);
+            }
             var claims = new List<Claim>() {
-                        new Claim(ClaimTypes.Name, login.Username),
+                        new Claim(ClaimTypes.Name, login.Username!),
                         new Claim(ClaimTypes.Role, "user"),
                         new Claim("FavoriteDrink", "Tea")
             };

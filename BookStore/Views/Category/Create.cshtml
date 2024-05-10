@@ -1,38 +1,47 @@
 ﻿@model Category
-
-<form method="post">
-    <div class="row pb-2">
-        <h2>Create Category</h2>
+<div class="card mb-3 box-shadow">
+    <div class="card-header bg-dark">
+        <div class="row pb-2">
+            <h2>Create Category</h2>
+        </div>
     </div>
-    <div asp-validation-summary="All" class="text-danger"></div>
-    @* 
-        asp-validation-summary = ALL - To display all the validation errors.
-        asp-validation-summary = ModelOnly - To display only custom model errors which are setup in the code.
+    <div class="card-body">
+        <form method="post">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @*
+            asp-validation-summary = ALL - To display all the validation errors.
+            asp-validation-summary = ModelOnly - To display only custom model errors which are setup in the code.
             ex:- ModelState.AddModelError("name", "Category Name and Display Order should not be same");
-    *@
-    <div class="form-group">
-        <label asp-for="Name" class="form-label mt-4"></label>
-        <input asp-for="Name" class="form-control" placeholder="Enter category">
-        <span asp-validation-for="Name" class="text-danger"></span>
+            *@
+            <div class="form-group">
+                <label asp-for="Name" class="form-label mt-4"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter category">
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayOrder" class="form-label mt-4"></label>
+                <input asp-for="DisplayOrder" class="form-control" placeholder="Enter number">
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+            <div class="row pt-2">
+                <div class="col-md-6 col-lg-6">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+                <div class="col-md-6 col-lg-6 text-end">
+                    <a asp-controller="Category" asp-action="Index" class="btn btn-primary">
+                        Back to list
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label asp-for="DisplayOrder" class="form-label mt-4"></label>
-        <input asp-for="DisplayOrder" class="form-control" placeholder="Enter number">
-        <span asp-validation-for="DisplayOrder" class="text-danger"></span>
-    </div>
-    <div class="row pt-2">
-        <div class="col-md-6 col-lg-6">
-            <button type="submit" class="btn btn-success">Submit</button>
-        </div>
-        <div class="col-md-6 col-lg-6 text-end">
-            <a asp-controller="Category" asp-action="Index" class="btn btn-primary">
-                Back to list
-            </a>
-        </div>
-    </div>
-</form>
+</div>
 
-@section Scripts 
+
+@section Scripts
 {
-    @{ <partial name="_ValidationScriptsPartial"/> }
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }

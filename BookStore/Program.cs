@@ -1,4 +1,6 @@
-using BookStore.Data;
+using BookStore.DataAccess.Data;
+using BookStore.DataAccess.Repository;
+using BookStore.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +24,8 @@ namespace BookStore
                 options.LoginPath = "/Login/Index";
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(20);
                 options.AccessDeniedPath = "/forbidden/";
-            }) ;
+            });
+            services.AddSingleton<ICategoryRepository, CategoryRepository>();
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
