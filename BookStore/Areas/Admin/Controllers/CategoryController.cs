@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStore.Controllers
+namespace BookStore.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _repository;
@@ -16,13 +17,13 @@ namespace BookStore.Controllers
         {
             _repository = repository;
         }
-        [Authorize]
+        //[Authorize]
         public IActionResult Index()
         {
             var categories = _repository.GetAll().ToList();
             return View(categories);
         }
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             return View();
         }
@@ -30,11 +31,11 @@ namespace BookStore.Controllers
         [HttpPost]
         public IActionResult Create(Category category)
         {
-            if (category.Name == category.DisplayOrder.ToString()) 
+            if (category.Name == category.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("name", "Category Name and Display Order should not be same");
             }
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 _repository.Add(category);
                 _repository.Save();
@@ -42,12 +43,12 @@ namespace BookStore.Controllers
                 return RedirectToAction("Index", "Category");
             }
             return View(category);
-            
+
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id) 
-        { 
+        public IActionResult Edit(int? id)
+        {
             var category = _repository.Get(item => item.Id == id);
             return View(category);
         }

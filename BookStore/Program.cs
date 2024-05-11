@@ -25,7 +25,8 @@ namespace BookStore
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(20);
                 options.AccessDeniedPath = "/forbidden/";
             });
-            services.AddSingleton<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -42,7 +43,7 @@ namespace BookStore
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }
