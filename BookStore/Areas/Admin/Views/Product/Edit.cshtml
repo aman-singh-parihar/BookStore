@@ -1,0 +1,67 @@
+﻿@model Product
+@{
+    var categories = ViewBag.Categories;
+}
+<div class="card mb-3 box-shadow">
+    <div class="card-header bg-dark">
+        <div class="row pb-2">
+            <h2>Update Product</h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @*
+            asp-validation-summary = ALL - To display all the validation errors.
+            asp-validation-summary = ModelOnly - To display only custom model errors which are setup in the code.
+            ex:- ModelState.AddModelError("name", "Category Name and Display Order should not be same");
+            *@
+            <div class="form-group">
+                <label asp-for="Title" class="form-label mt-4"></label>
+                <input asp-for="Title" class="form-control" placeholder="Enter Title">
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ISBN" class="form-label mt-4"></label>
+                <input asp-for="ISBN" class="form-control" placeholder="Enter ISBN">
+                <span asp-validation-for="ISBN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="form-label mt-4"></label>
+                <textarea asp-for="Description" class="form-control" placeholder="Enter Description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author" class="form-label mt-4"></label>
+                <input asp-for="Author" class="form-control" placeholder="Enter Description">
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-label mt-4"></label>
+                <select class="form-select" asp-for="CategoryId" asp-items="ViewBag.Categories">
+                    <option disabled selected>--Select Category--</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="row pt-2">
+                <div class="col-md-6 col-lg-6">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+                <div class="col-md-6 col-lg-6 text-end">
+                    <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-primary">
+                        Back to list
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

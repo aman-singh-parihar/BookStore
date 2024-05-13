@@ -1,6 +1,7 @@
 ﻿using BookStore.DataAccess.Repository.IRepository;
 using BookStore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -8,10 +9,13 @@ namespace BookStore.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository,
+            ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
         }
         public IActionResult Index()
         {
@@ -19,18 +23,17 @@ namespace BookStore.Areas.Admin.Controllers
             return View(products);
         }
 
-        public IActionResult Create() 
+        public IActionResult Create()
         {
-            ViewData["PageName"] = "Create";
-            return View("Upsert");
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Product product) 
+        public IActionResult Create(Product product)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
-                return View("Upsert", product);
+                return View(product);
             }
             _productRepository.Add(product);
             _productRepository.Save();
@@ -38,20 +41,37 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
 
-        public IActionResult Edit(int? id) 
+        public IActionResult Edit(int? id)
         {
             var product = _productRepository.Get(product => product.Id == id);
-            ViewData["PageName"] = "Update";
-            return View("Upsert", product);
+            var categories = _categoryRepository.GetAll()
+                .Select(category => new SelectListItem(category.Name, Convert.ToString(category.Id)));
+            ViewBag.Categories = categories;
+            return View(product);
         }
 
-        public IActionResult Update(Product product) 
+        [HttpPost]
+        public IActionResult Edit(Product product)
         {
             if (!ModelState.IsValid)
             {
                 return View(product);
             }
             _productRepository.Update(product);
+            _productRepository.Save();
+            return RedirectToAction("Index", "Product");
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            var product = _productRepository.Get(product => product.Id == id);
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Product product)
+        {
+            _productRepository.Delete(product);
             _productRepository.Save();
             return RedirectToAction("Index", "Product");
         }
