@@ -1,5 +1,6 @@
-﻿using BookStore.DataAccess.Repository.IRepository;
+using BookStore.DataAccess.Repository.IRepository;
 using BookStore.Models;
+using BookStore.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -10,17 +11,32 @@ namespace BookStore.Areas.Admin.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IWebHostEnvironment _environment;
 
-        public ProductController(IProductRepository productRepository,
-            ICategoryRepository categoryRepository)
+        public ProductController(IProductRepository productRepository
+            ,ICategoryRepository categoryRepository
+            ,IWebHostEnvironment environment)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _environment = environment;
         }
+
+
         public IActionResult Index()
         {
             var products = _productRepository.GetAll();
-            return View(products);
+            var categories = _categoryRepository.GetAll();
+
+            var productViewModel = products.Select(product => new ListProductVM
+            {
+                Product = product,
+                Category = new SelectListItem(categories.Where(category => category.Id == product.Category.Id).FirstOrDefault().Name,
+                    categories.Where(category => category.Id == product.Category.Id).FirstOrDefault().Id.ToString(),
+                    selected: true)
+
+            }).ToList();
+            return View(productViewModel);
         }
 
         public IActionResult Create()
@@ -46,18 +62,28 @@ namespace BookStore.Areas.Admin.Controllers
             var product = _productRepository.Get(product => product.Id == id);
             var categories = _categoryRepository.GetAll()
                 .Select(category => new SelectListItem(category.Name, Convert.ToString(category.Id)));
-            ViewBag.Categories = categories;
-            return View(product);
+            var vm = new ProductVM
+            {
+                Product = product,
+                Categories = categories 
+            };
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public async Task<IActionResult> Edit(ProductVM productViewModel, IFormFile file)
         {
             if (!ModelState.IsValid)
             {
-                return View(product);
+                return View(productViewModel);
             }
-            _productRepository.Update(product);
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(_environment.WebRootPath,"images","products", fileName);
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+            _productRepository.Update(productViewModel.Product);
             _productRepository.Save();
             return RedirectToAction("Index", "Product");
         }
