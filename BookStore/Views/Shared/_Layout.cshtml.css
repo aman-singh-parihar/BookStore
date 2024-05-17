@@ -46,3 +46,9 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+.circle-image {
+    width: 100%; /* Make the image fill the parent div horizontally */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Make the image circular */
+    display: block; /* Ensure proper display */
+}

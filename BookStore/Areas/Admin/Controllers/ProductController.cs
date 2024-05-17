@@ -41,16 +41,29 @@ namespace BookStore.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var categories = _categoryRepository.GetAll()
+                .Select(category => new SelectListItem(category.Name, Convert.ToString(category.Id)));
+            var vm = new ProductVM
+            {
+                Categories = categories
+            };
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public async Task<IActionResult> Create(Product product, IFormFile file)
         {
             if (!ModelState.IsValid)
             {
                 return View(product);
             }
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(_environment.WebRootPath, "images", "products", fileName);
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+            product.ImageUrl = @"\images\products\" + Path.GetFileName(file.FileName);
             _productRepository.Add(product);
             _productRepository.Save();
             return RedirectToAction("Index", "Product");
@@ -83,6 +96,7 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 await file.CopyToAsync(stream);
             }
+            productViewModel.Product.ImageUrl = @"\images\products\" + Path.GetFileName(file.FileName);
             _productRepository.Update(productViewModel.Product);
             _productRepository.Save();
             return RedirectToAction("Index", "Product");
