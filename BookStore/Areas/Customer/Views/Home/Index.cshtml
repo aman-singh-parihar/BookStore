@@ -1,8 +1,19 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    @model IEnumerable<Product>
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="flex-container flex-justify-between flex-align-center flex-wrap">
+    @foreach(var product in Model)
+    {
+        <div class="card" style="width: 18rem;">
+          <img class="card-img-top" src="@product.ImageUrl" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">@product.Title</h5>
+            <p class="card-text">@product.Description</p>
+            <a asp-action="Details" asp-controller="Home" asp-area="Customer" class="btn btn-primary" asp-route-id="@product.Id">Details</a>
+          </div>
+        </div>
+    }
 </div>
+
+

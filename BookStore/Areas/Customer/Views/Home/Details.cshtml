@@ -1,0 +1,17 @@
+﻿@{
+    @model Product
+}
+
+<div class="row">
+    <div class="col-lg-4">
+        <img src="@Model.ImageUrl" alt="Card image cap" style="height: 75%;display: block;"/>
+    </div>
+    <div class="col-lg-6">
+        <h2>@Model.Title</h2>
+        <p>@Model.Description</p>
+        <h5>@Model.Price</h5>
+        <h5>@Model.Price50</h5>
+        <h5>@Model.Price100</h5>
+        <a asp-action="Card" class="btn btn-primary">Add to cart</a>
+    </div>
+</div>

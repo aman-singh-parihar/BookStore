@@ -16,3 +16,18 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    
+}
+.flex-justify-evenly {
+    justify-content:space-between;
+}
+.flex-align-center {
+    align-items: center;
+}
+.flex-wrap {
+    flex-wrap:wrap;
+}
