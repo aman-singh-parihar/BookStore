@@ -3,6 +3,7 @@ using BookStore.DataAccess.Repository;
 using BookStore.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookStore
 {
@@ -11,6 +12,11 @@ namespace BookStore
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("BookStoreDbContextConnection") ?? throw new InvalidOperationException("Connection string 'BookStoreDbContextConnection' not found.");
+
+            builder.Services.AddDbContext<BookStoreDbContext>(options => options.UseSqlServer(connectionString));
+
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<BookStoreDbContext>();
 
             // Add services to the container.
             var configuration = builder.Configuration;
